@@ -1,9 +1,14 @@
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
 import os
+
 from dotenv import load_dotenv
-from Routers import tasks, notes
+from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
+
 from database import Base, engine
+from Routers import notes, tasks
+
 load_dotenv()
 
 
@@ -25,6 +30,8 @@ app = FastAPI(
     version='v0.0.1'
 )
 
+templates = Jinja2Templates(directory='templates')
+
 
 origins = os.getenv('ORIGIN_LIST')
 
@@ -33,6 +40,13 @@ app.add_middleware(CORSMiddleware,allow_origins = origins,allow_credentials=True
     allow_headers=["*"])
 app.include_router(tasks.router)
 app.include_router(notes.router)
+
+
+@app.get('/', response_class=HTMLResponse)
+def home(request:Request):
+    return templates.TemplateResponse(
+        request = request, name='index.html'
+    )
 
 
 
