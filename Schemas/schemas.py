@@ -10,6 +10,7 @@ class StatusOption(str, Enum):
         
         
 class NoteSchema(BaseModel):
+    id:int
     task_id: int
     title: Annotated[str,Field(...,max_length=30)]
     body: Annotated[str | None,Field(max_length=500)] = 'I have nothing to say'
@@ -26,6 +27,7 @@ class TaskSchema(BaseModel):
         form_attributes = True
 
 class ResponseTaskSchema(TaskSchema):
+    id: int
     notes: list[NoteSchema] = []
     
     
