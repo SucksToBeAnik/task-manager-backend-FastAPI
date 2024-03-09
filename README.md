@@ -1,6 +1,6 @@
 # Task Manager API
 
-[**See Live**](https://task-manager-backend-fastapi.onrender.com/docs)
+[**See Live**](https://task-manager-backend-fastapi.onrender.com)
 
 <hr />
 
