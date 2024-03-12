@@ -2,6 +2,7 @@ import os
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, Request
+import uvicorn
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
@@ -49,4 +50,7 @@ def home(request:Request):
     )
 
 
+
+if __name__ == '__main__':
+    os.system('uvicorn main:app --reload')
 

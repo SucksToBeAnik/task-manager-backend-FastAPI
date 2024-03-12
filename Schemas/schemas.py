@@ -20,7 +20,7 @@ class NoteSchema(BaseModel):
 class TaskSchema(BaseModel):
     title: Annotated[str,Field(max_length=30)]
     body: Annotated[str | None,Field(max_length=100)] = 'I have nothing to say'
-    status: StatusOption | None = 'Ongoing'
+    status: StatusOption = StatusOption.ongoing
     
     
     class Config:
