@@ -7,6 +7,9 @@ from Schemas import schemas
 
 
 
+
+# todo 1. add note delete, update and get single note functionality
+
 router = APIRouter(
     prefix='/notes',
     tags=['Notes']
@@ -20,6 +23,32 @@ async def get_notes(db:Session = Depends(get_db_connection)):
     notes = db.query(models.Note).all()
     
     return notes
+
+@router.get('/{id}')
+async def get_single_note(id:int,db: Session = Depends(get_db_connection)):
+
+    note = db.query(models.Note).get(id)
+
+    if note is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Note with id {id} does not exist!")
+    else:
+        return note
+    
+
+
+@router.delete('/{id}')
+async def delete_note(id:int,db: Session = Depends(get_db_connection)):
+    note = db.query(models.Note).get(id)
+
+    if note is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Note with id {id} does not exist!")
+    else:
+        try:
+            db.delete(note)
+            db.commit()
+            return {'msg':"Note deleted!"}
+        except SQLAlchemyError as e:
+            raise HTTPException(status_code=status.HTTP_417_EXPECTATION_FAILED, detail='Something unexpected occurred. Please try again!')
 
 
 
@@ -42,5 +71,21 @@ async def create_note(request:Request, note_data: schemas.NoteSchema, db:Session
         db.rollback()
         raise e
     
-    return {'note':note_model,'response':'Note created successfully!'}
+    return {'note':note_model,'msg':'Note created successfully!'}
+
+
+@router.put("/{id}")
+async def update_note(id:int, note: schemas.UpdateNoteSchema, db: Session = Depends(get_db_connection)):
+    note_to_update = db.query(models.Note).get(id)
+    if note_to_update is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Note with id {id} does not exist!")
+    else:
+        try:
+            note_to_update.title = note.title
+            note_to_update.body = note.body
+            db.commit()
+
+            return {"msg":f"Note with id {id} updated successfully!"}
+        except SQLAlchemyError as e:
+            raise HTTPException(status_code=status.HTTP_417_EXPECTATION_FAILED, detail='Something unexpected occurred. Please try again!')
     
