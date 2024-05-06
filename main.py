@@ -34,9 +34,8 @@ app = FastAPI(
 templates = Jinja2Templates(directory='templates')
 
 
-origins = os.getenv('ORIGIN_LIST')
 
-app.add_middleware(CORSMiddleware,allow_origins = origins,allow_credentials=True,
+app.add_middleware(CORSMiddleware,allow_origins = ["*"],allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"])
 app.include_router(tasks.router)
